@@ -15,6 +15,8 @@ pygame.display.set_caption("Platformer")
 
 # define game variables
 tile_size = 40
+game_over = 0
+
 
 # load images
 sun_img = pygame.image.load("img/sun.png")
@@ -27,6 +29,7 @@ bg_img = pygame.image.load("img/sky.png")
 #         pygame.draw.line(screen, (255, 255, 255), (line * tile_size, 0), (line * tile_size, screen_height))
 
 # grid lines are created for positioning reference
+
 
 
 class Player:
@@ -43,6 +46,7 @@ class Player:
             )  # not for yaxis false
             self.images_right.append(img_right)
             self.images_left.append(image_left)
+        self.dead_image = pygame.image.load('img/ghost.png')
         self.image = self.images_right[self.index]
         self.rect = self.image.get_rect()  # coordinates
         self.rect.x = x
@@ -53,80 +57,98 @@ class Player:
         self.jumped = False
         self.diarection = 0
 
-    def update(self):
+    def update(self, game_over):
         dx = 0
         dy = 0
         walk_cooldown = 5
-        # getting keypresses
-        key = pygame.key.get_pressed()
-        if key[pygame.K_SPACE] and self.jumped == False:
-            self.val_y = -12.9  # length of jump
-            self.jumped = True
-        if key[pygame.K_SPACE] == False:
-            self.jumped = False
-        if key[pygame.K_a]:
-            dx -= 5
-            self.counter += 1  # animation(image iteration)
-            self.diarection = -1
-        if key[pygame.K_d]:
-            dx += 5
-            self.counter += 1  # animation(image iteration)
-            self.diarection = 1
-        if (
-            key[pygame.K_a] == False and key[pygame.K_d] == False
-        ):  # reset char to standby
-            self.counter = 0
-            self.index = 0
-            if self.diarection == 1:
-                self.image = self.images_right[self.index]
-            if self.diarection == -1:
-                self.image = self.images_left[self.index]
 
-        # handle animation
-        # self.counter += 1
-        if self.counter > walk_cooldown:  # to slow dawn and normalize the animation
-            self.counter = 0
-            self.index += 1
-            if self.index >= len(self.images_right):
+        if game_over == 0:
+            # getting keypresses
+            key = pygame.key.get_pressed()
+            if key[pygame.K_SPACE] and self.jumped == False:
+                self.val_y = -14  # length of jump
+                self.jumped = True
+            if key[pygame.K_SPACE] == False:
+                self.jumped = False
+            if key[pygame.K_a]:
+                dx -= 5
+                self.counter += 1  # animation(image iteration)
+                self.diarection = -1
+            if key[pygame.K_d]:
+                dx += 5
+                self.counter += 1  # animation(image iteration)
+                self.diarection = 1
+            if (
+                key[pygame.K_a] == False and key[pygame.K_d] == False
+            ):  # reset char to standby
+                self.counter = 0
                 self.index = 0
-            if self.diarection == 1:
-                self.image = self.images_right[self.index]
-            if self.diarection == -1:
-                self.image = self.images_left[self.index]
-        # adding gravity
-        self.val_y += 1
-        if self.val_y > 7:
-            self.val_y = 7  # power of gravity
-        dy += self.val_y
+                if self.diarection == 1:
+                    self.image = self.images_right[self.index]
+                if self.diarection == -1:
+                    self.image = self.images_left[self.index]
 
-        # check for collision
-        for tile in world.tile_list:
-            # check for collision in x direction
-            if tile[1].colliderect(
-                self.rect.x + dx, self.rect.y, self.width, self.height
-            ):
-                dx = 0
-            # check for collision in y direction
-            if tile[1].colliderect(
-                self.rect.x, self.rect.y + dy, self.width, self.height
-            ):
-                # check if below the ground i.e. jumping
-                if self.val_y < 0:
-                    dy = tile[1].bottom - self.rect.top
-                    self.val_y = 0
-                # check if above the ground i.e. falling
-                elif self.val_y >= 0:
-                    dy = tile[1].top - self.rect.bottom
+            # handle animation
+            # self.counter += 1
+            if self.counter > walk_cooldown:  # to slow dawn and normalize the animation
+                self.counter = 0
+                self.index += 1
+                if self.index >= len(self.images_right):
+                    self.index = 0
+                if self.diarection == 1:
+                    self.image = self.images_right[self.index]
+                if self.diarection == -1:
+                    self.image = self.images_left[self.index]
+            # adding gravity
+            self.val_y += 1
+            if self.val_y > 7:
+                self.val_y = 7  # power of gravity
+            dy += self.val_y
 
-        # update player coordinates
-        self.rect.x += dx
-        self.rect.y += dy
+            # check for collision
+            for tile in world.tile_list:
+                # check for collision in x direction
+                if tile[1].colliderect(
+                    self.rect.x + dx, self.rect.y, self.width, self.height
+                ):
+                    dx = 0
+                # check for collision in y direction
+                if tile[1].colliderect(
+                    self.rect.x, self.rect.y + dy, self.width, self.height
+                ):
+                    # check if below the ground i.e. jumping
+                    if self.val_y < 0:
+                        dy = tile[1].bottom - self.rect.top
+                        self.val_y = 0
+                    # check if above the ground i.e. falling
+                    elif self.val_y >= 0:
+                        dy = tile[1].top - self.rect.bottom
+            # check for collision with enemy
+            if pygame.sprite.spritecollide(self, blob_group, False):
+                game_over = -1
 
-        if self.rect.bottom > screen_height:
-            self.rect.bottom = screen_height
-            dy = 0
+            # check for collision with lava
+            if pygame.sprite.spritecollide(self, lava_group, False):
+                game_over = -1
+                # print(game_over)
+
+            # update player coordinates
+            self.rect.x += dx
+            self.rect.y += dy
+
+        elif game_over == -1:
+            self.image = self.dead_image
+            if self.rect.y > 200:
+                self.rect.y -= 5
+			
+
+            # if self.rect.bottom > screen_height:
+            #     self.rect.bottom = screen_height
+            #     dy = 0
         # draw the player on the screen
         screen.blit(self.image, self.rect)
+
+        return game_over
 
 
 class World:
@@ -158,6 +180,11 @@ class World:
                 if tile == 3:
                     blob = Enemy(col_count * tile_size, row_count * tile_size + 5)
                     blob_group.add(blob)
+                if tile == 6:
+                    lava = Lava(
+                        col_count * tile_size, row_count * tile_size + (tile_size // 2)
+                    )
+                    lava_group.add(lava)
                 col_count += 1
             row_count += 1
 
@@ -168,21 +195,34 @@ class World:
 
 
 class Enemy(pygame.sprite.Sprite):
-	def __init__(self, x, y):
-		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.image.load('img/blob.png')
-		self.rect = self.image.get_rect()
-		self.rect.x = x
-		self.rect.y = y
-		self.move_direction = 1
-		self.move_counter = 0
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("img/blob.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.move_direction = 1
+        self.move_counter = 0
 
-	def update(self):
-		self.rect.x += self.move_direction
-		self.move_counter += 1
-		if abs(self.move_counter) > 40:
-			self.move_direction *= -1     #flip diarection
-			self.move_counter *= -1       #flip distence
+    def update(self):
+        self.rect.x += self.move_direction
+        self.move_counter += 1
+        if abs(self.move_counter) > 40:
+            self.move_direction *= -1  # flip diarection
+            self.move_counter *= -1  # flip distence
+
+
+class Lava(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("img/lava.png")
+        self.image = pygame.transform.scale(self.image, (tile_size, tile_size // 2))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.move_direction = 1
+        self.move_counter = 0
+
 
 world_data = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -210,6 +250,7 @@ world_data = [
 Player = Player(100, screen_height - 91)
 
 blob_group = pygame.sprite.Group()
+lava_group = pygame.sprite.Group()
 
 world = World(world_data)
 
@@ -221,11 +262,13 @@ while run:
 
     world.draw()
 
-    blob_group.update()
-
+    if game_over == 0:
+        blob_group.update() 
+    
     blob_group.draw(screen)
+    lava_group.draw(screen)
 
-    Player.update()
+    game_over = Player.update(game_over)
 
     # draw_grid()
 
