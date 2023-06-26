@@ -16,12 +16,14 @@ pygame.display.set_caption("Platformer")
 # define game variables
 tile_size = 40
 game_over = 0
-
+main_menu = True
 
 # load images
 sun_img = pygame.image.load("img/sun.png")
 bg_img = pygame.image.load("img/sky.png")
 restart_img = pygame.image.load("img/restart_btn.png")
+start_img = pygame.image.load("img/start_btn.png")
+exit_img = pygame.image.load("img/exit_btn.png")
 
 
 # def draw_grid():
@@ -119,17 +121,18 @@ class Player:
             for tile in world.tile_list:
                 # check for collision in x direction
                 if tile[1].colliderect(
-                    self.rect.x + dx, self.rect.y, self.width, self.height):
+                    self.rect.x + dx, self.rect.y, self.width, self.height
+                ):
                     dx = 0
                 # check for collision in y direction
                 if tile[1].colliderect(
-                    self.rect.x, self.rect.y + dy, self.width, self.height):
-                    
+                    self.rect.x, self.rect.y + dy, self.width, self.height
+                ):
                     # check if below the ground i.e. jumping
                     if self.val_y < 0:
                         dy = tile[1].bottom - self.rect.top
                         self.val_y = 0
-                    
+
                     # check if above the ground i.e. falling
                     elif self.val_y >= 0:
                         dy = tile[1].top - self.rect.bottom
@@ -293,6 +296,8 @@ world = World(world_data)
 
 # create button
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
+start_button = Button(screen_width // 2 - 150, screen_height // 2 + 50, start_img)
+exit_button = Button(screen_width // 2 - 130, screen_height // 2 - 150, exit_img)
 
 run = True
 while run:
@@ -300,20 +305,28 @@ while run:
     screen.blit(bg_img, (0, 0))
     screen.blit(sun_img, (100, 100))
 
-    world.draw()
+    if main_menu == True:
+        if exit_button.draw():
+            run = False          #fuctionality to exit button
+        if start_button.draw():
+            main_menu = False     #fuctionality to start button
+    else:
+        world.draw()
 
-    if game_over == 0:
-        blob_group.update()
+        if game_over == 0:
+            blob_group.update()
 
-    blob_group.draw(screen)
-    lava_group.draw(screen)
+        blob_group.draw(screen)
+        lava_group.draw(screen)
 
-    game_over = Player.update(game_over)
-    if game_over == -1:
-        if restart_button.draw():  # if game over the restart buttton
-            # print("restart")
-            Player.reset(100, screen_height - 91)
-            game_over = 0
+        game_over = Player.update(game_over)
+
+        # if player died
+        if game_over == -1:
+            if restart_button.draw():  # if game over the restart buttton
+                # print("restart")
+                Player.reset(100, screen_height - 91)
+                game_over = 0
 
     # draw_grid()
 
