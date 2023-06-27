@@ -448,7 +448,7 @@ coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
 # dummy coin
-score_coin = Coin(tile_size // 2, tile_size // 2 + 8)
+score_coin = Coin(tile_size // 2+ 5, tile_size // 2 +2)
 coin_group.add(score_coin)
 
 
@@ -486,7 +486,8 @@ while run:
             if pygame.sprite.spritecollide(Player, coin_group, True):
                 score += 1
                 coin_fx.play()
-            draw_text("X " + str(score), font_score, white, tile_size - 10, 10)
+            draw_text("X " + str(score), font_score, white, tile_size - 2, 5)
+            draw_text("Level " + str(level+1), font_score, white, tile_size + 640, 5)
 
         # drawing things onto screen
         blob_group.draw(screen)
@@ -517,6 +518,7 @@ while run:
                     level
                 )  # clear all data and return the new world data and store in world
                 game_over = 0
+                # draw_text("Level " + str(level), font_score, white, tile_size - 10, 10)
             else:
                 # restart if player compleate all levels
                 draw_text(
@@ -527,7 +529,7 @@ while run:
                     screen_height // 2,
                 )
                 if restart_button.draw():
-                    level = 1
+                    level = 0
                     world_data = []
                     world = reset_level(
                         level
