@@ -1,9 +1,12 @@
 from typing import Any
 import pygame
 from pygame.locals import *
+from pygame import mixer
 import pickle
 from os import path
 
+pygame.mixer.pre_init(44100, -16, 2, 512)
+mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -15,6 +18,17 @@ screen_height = 800
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Platformer")
 
+
+# define font
+font = pygame.font.SysFont("Bauhaus 93", 70)
+font_score = pygame.font.SysFont("Bauhaus 93", 30)
+
+
+# define colours
+white = (255, 255, 255)
+blue = (0, 0, 255)
+red =(255, 0, 0)
+
 # define game variables
 tile_size = 40
 game_over = 0
@@ -22,6 +36,8 @@ main_menu = True
 level = 0
 max_levels = 7
 score = 0
+# text_col = white
+
 
 # load images
 sun_img = pygame.image.load("img/sun.png")
@@ -29,6 +45,22 @@ bg_img = pygame.image.load("img/sky.png")
 restart_img = pygame.image.load("img/restart_btn.png")
 start_img = pygame.image.load("img/start_btn.png")
 exit_img = pygame.image.load("img/exit_btn.png")
+
+
+#load sounds
+pygame.mixer.music.load('img/music.wav')
+pygame.mixer.music.play(-1, 0.0, 5000)       #normalize the audio
+coin_fx = pygame.mixer.Sound('img/coin.wav')
+# coin_fx.set_volume(0.5)
+jump_fx = pygame.mixer.Sound('img/jump.wav')
+# jump_fx.set_volume(0.5)
+game_over_fx = pygame.mixer.Sound('img/game_over.wav')
+# game_over_fx.set_volume(0.5)
+
+
+def draw_text(text, font, color, x, y):
+    img = font.render(text, True, color)
+    screen.blit(img, (x, y))
 
 
 # function for reset level
@@ -93,6 +125,7 @@ class Player:
             # getting keypresses
             key = pygame.key.get_pressed()
             if key[pygame.K_SPACE] and self.jumped == False and self.in_air == False:
+                jump_fx.play()
                 self.val_y = -14  # length of jump
                 self.jumped = True
             if key[pygame.K_SPACE] == False:
@@ -158,10 +191,11 @@ class Player:
             # check for collision with enemy
             if pygame.sprite.spritecollide(self, blob_group, False):
                 game_over = -1
-
+                game_over_fx.play()
             # check for collision with lava
             if pygame.sprite.spritecollide(self, lava_group, False):
                 game_over = -1
+                game_over_fx.play()
                 # print(game_over)
             # check for collision with exit
             if pygame.sprite.spritecollide(self, exit_group, False):
@@ -175,7 +209,7 @@ class Player:
             self.image = self.dead_image
             if self.rect.y > 200:
                 self.rect.y -= 5
-
+                draw_text("GAME OVER !", font, red, (screen_width // 2) - 112, screen_height //2)
             # if self.rect.bottom > screen_height:
             #     self.rect.bottom = screen_height
             #     dy = 0
@@ -343,6 +377,10 @@ lava_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
+# dummy coin
+score_coin = Coin(tile_size // 2, tile_size // 2 + 8)
+coin_group.add(score_coin)
+
 # load in level data and create wirld
 if path.exists(f"level{level}_data"):
     pickled_data = open(f"level{level}_data", "rb")
@@ -367,14 +405,14 @@ while run:
             main_menu = False  # fuctionality to start button
     else:
         world.draw()
-
         if game_over == 0:
             blob_group.update()
             # update score
             # check if a coin has been collected
             if pygame.sprite.spritecollide(Player, coin_group, True):
                 score += 1
-
+                coin_fx.play()
+            draw_text("X " + str(score), font_score, white, tile_size - 10, 10)
 
         # drawing things onto screen
         blob_group.draw(screen)
@@ -406,6 +444,7 @@ while run:
                 game_over = 0
             else:
                 # restart if player compleate all levels
+                draw_text("YOU WIN !", font, blue, (screen_width // 2) - 112, screen_height //2)
                 if restart_button.draw():
                     level = 1
                     world_data = []
