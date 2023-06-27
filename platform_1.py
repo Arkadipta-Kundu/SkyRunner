@@ -1,6 +1,8 @@
 from typing import Any
 import pygame
 from pygame.locals import *
+import pickle
+from os import path
 
 pygame.init()
 
@@ -17,6 +19,8 @@ pygame.display.set_caption("Platformer")
 tile_size = 40
 game_over = 0
 main_menu = True
+level = 0
+max_levels = 7
 
 # load images
 sun_img = pygame.image.load("img/sun.png")
@@ -26,10 +30,20 @@ start_img = pygame.image.load("img/start_btn.png")
 exit_img = pygame.image.load("img/exit_btn.png")
 
 
-# def draw_grid():
-#     for line in range(0, 20):
-#         pygame.draw.line(screen, (255, 255, 255), (0, line * tile_size), (screen_width, line * tile_size))
-#         pygame.draw.line(screen, (255, 255, 255), (line * tile_size, 0), (line * tile_size, screen_height))
+# function for reset level
+def reset_level(level):
+    Player.reset(100, screen_height - 91)
+    blob_group.empty()
+    lava_group.empty()
+    exit_group.empty()
+
+    # load in level data and create wirld
+    if path.exists(f"level{level}_data"):
+        pickled_data = open(f"level{level}_data", "rb")
+        world_data = pickle.load(pickled_data)
+    world = World(world_data)
+
+    return world
 
 # grid lines are created for positioning reference
 
@@ -147,6 +161,9 @@ class Player:
             if pygame.sprite.spritecollide(self, lava_group, False):
                 game_over = -1
                 # print(game_over)
+            # check for collision with exit
+            if pygame.sprite.spritecollide(self, exit_group, False):
+                game_over = +1
 
             # update player coordinates
             self.rect.x += dx
@@ -225,6 +242,11 @@ class World:
                         col_count * tile_size, row_count * tile_size + (tile_size // 2)
                     )
                     lava_group.add(lava)
+                if tile == 8:
+                    exit = Exit(
+                        col_count * tile_size, row_count * tile_size - (tile_size // 2)
+                    )
+                    exit_group.add(exit)
                 col_count += 1
             row_count += 1
 
@@ -247,7 +269,7 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.move_direction
         self.move_counter += 1
-        if abs(self.move_counter) > 40:
+        if abs(self.move_counter) > 30:  # movement length of the enemy
             self.move_direction *= -1  # flip diarection
             self.move_counter *= -1  # flip distence
 
@@ -260,38 +282,53 @@ class Lava(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.move_direction = 1
-        self.move_counter = 0
 
 
-world_data = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 1],
-    [1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 2, 2, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 7, 0, 5, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1],
-    [1, 7, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0, 0, 1],
-    [1, 0, 2, 0, 0, 7, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 2, 0, 0, 4, 0, 0, 0, 0, 3, 0, 0, 3, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 7, 0, 0, 0, 0, 2, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2, 2, 2, 2, 2, 1],
-    [1, 0, 0, 0, 0, 0, 2, 2, 2, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-]
+class Exit(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("img/exit.png")
+        self.image = pygame.transform.scale(
+            self.image, (tile_size, int(tile_size * 1.5))
+        )
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
+# world_data = [
+#     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 1],
+#     [1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 2, 2, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 7, 0, 5, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1],
+#     [1, 7, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0, 0, 1],
+#     [1, 0, 2, 0, 0, 7, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 0, 2, 0, 0, 4, 0, 0, 0, 0, 3, 0, 0, 3, 0, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 7, 0, 0, 0, 0, 2, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2, 2, 2, 2, 2, 1],
+#     [1, 0, 0, 0, 0, 0, 2, 2, 2, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1],
+#     [1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [1, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+# ]
 
 Player = Player(100, screen_height - 91)
 
 blob_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
+exit_group = pygame.sprite.Group()
 
+# load in level data and create wirld
+if path.exists(f"level{level}_data"):
+    pickled_data = open(f"level{level}_data", "rb")
+    world_data = pickle.load(pickled_data)
 world = World(world_data)
 
 # create button
@@ -307,17 +344,19 @@ while run:
 
     if main_menu == True:
         if exit_button.draw():
-            run = False          #fuctionality to exit button
+            run = False  # fuctionality to exit button
         if start_button.draw():
-            main_menu = False     #fuctionality to start button
+            main_menu = False  # fuctionality to start button
     else:
         world.draw()
 
         if game_over == 0:
             blob_group.update()
 
+        # drawing things onto screen
         blob_group.draw(screen)
         lava_group.draw(screen)
+        exit_group.draw(screen)
 
         game_over = Player.update(game_over)
 
@@ -325,8 +364,26 @@ while run:
         if game_over == -1:
             if restart_button.draw():  # if game over the restart buttton
                 # print("restart")
-                Player.reset(100, screen_height - 91)
+                world_data = []
+                world = reset_level(level)
                 game_over = 0
+
+        # if player passed
+        if game_over == 1:
+            # reset game go to next level
+            level += 1
+            if level <= max_levels:
+                # reset level
+                world_data = []
+                world = reset_level(level)   #clear all data and return the new world data and store in world
+                game_over = 0
+            else:
+                # restart
+                if restart_button.draw():
+                    level = 1
+                    world_data = []
+                    world = reset_level(level)   #clear all data and return the new world data and store in world
+                    game_over = 0
 
     # draw_grid()
 
