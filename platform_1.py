@@ -58,6 +58,7 @@ game_over_fx = pygame.mixer.Sound("img/game_over.wav")
 # game_over_fx.set_volume(0.5)
 
 
+# function for adding text
 def draw_text(text, font, color, x, y):
     img = font.render(text, True, color)
     screen.blit(img, (x, y))
@@ -78,9 +79,6 @@ def reset_level(level):
     world = World(world_data)
 
     return world
-
-
-# grid lines are created for positioning reference
 
 
 class Button:
@@ -203,29 +201,31 @@ class Player:
             if pygame.sprite.spritecollide(self, exit_group, False):
                 game_over = +1
 
-            #check for collision with platforms
+            # check for collision with platforms
             for platform in platform_group:
-                #collision in the x direction
-                if platform.rect.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                # collision in the x direction
+                if platform.rect.colliderect(
+                    self.rect.x + dx, self.rect.y, self.width, self.height
+                ):
                     dx = 0
-                
-                #collision in the y direction
-                if platform.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                    #check if below platform
+
+                # collision in the y direction
+                if platform.rect.colliderect(
+                    self.rect.x, self.rect.y + dy, self.width, self.height
+                ):
+                    # check if below platform
                     if abs((self.rect.top + dy) - platform.rect.bottom) < col_thresh:
                         self.vel_y = 0
                         dy = platform.rect.bottom - self.rect.top
-                    #check if above platform
+                    # check if above platform
                     elif abs((self.rect.bottom + dy) - platform.rect.top) < col_thresh:
                         self.rect.bottom = platform.rect.top - 1
                         self.in_air = False
                         dy = 0
 
-                    #move sideways with platform
+                    # move sideways with platform
                     if platform.move_x != 0:
                         self.rect.x += platform.move_direction
-
-
 
             # update player coordinates
             self.rect.x += dx
@@ -435,7 +435,11 @@ class Exit(pygame.sprite.Sprite):
 #     [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 # ]
 
+
+# main part and loop of the game where everything comes together
+
 Player = Player(100, screen_height - 91)
+
 
 blob_group = pygame.sprite.Group()
 platform_group = pygame.sprite.Group()
@@ -447,17 +451,20 @@ exit_group = pygame.sprite.Group()
 score_coin = Coin(tile_size // 2, tile_size // 2 + 8)
 coin_group.add(score_coin)
 
+
 # load in level data and create wirld
 if path.exists(f"level{level}_data"):
     pickled_data = open(f"level{level}_data", "rb")
     world_data = pickle.load(pickled_data)
 world = World(world_data)
 
+
 # create button
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - 150, screen_height // 2 + 50, start_img)
 exit_button = Button(screen_width // 2 - 130, screen_height // 2 - 150, exit_img)
 
+# the main loop
 run = True
 while run:
     clock.tick(fps)
