@@ -21,6 +21,7 @@ game_over = 0
 main_menu = True
 level = 0
 max_levels = 7
+score = 0
 
 # load images
 sun_img = pygame.image.load("img/sun.png")
@@ -44,6 +45,7 @@ def reset_level(level):
     world = World(world_data)
 
     return world
+
 
 # grid lines are created for positioning reference
 
@@ -242,6 +244,12 @@ class World:
                         col_count * tile_size, row_count * tile_size + (tile_size // 2)
                     )
                     lava_group.add(lava)
+                if tile == 7:
+                    coin = Coin(
+                        col_count * tile_size + (tile_size // 2),
+                        row_count * tile_size + (tile_size // 2),
+                    )
+                    coin_group.add(coin)
                 if tile == 8:
                     exit = Exit(
                         col_count * tile_size, row_count * tile_size - (tile_size // 2)
@@ -284,6 +292,15 @@ class Lava(pygame.sprite.Sprite):
         self.rect.y = y
 
 
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        img = pygame.image.load("img/coin.png")
+        self.image = pygame.transform.scale(img, (tile_size // 2, tile_size // 2))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+
 class Exit(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -323,6 +340,7 @@ Player = Player(100, screen_height - 91)
 
 blob_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
+coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
 # load in level data and create wirld
@@ -352,10 +370,16 @@ while run:
 
         if game_over == 0:
             blob_group.update()
+            # update score
+            # check if a coin has been collected
+            if pygame.sprite.spritecollide(Player, coin_group, True):
+                score += 1
+
 
         # drawing things onto screen
         blob_group.draw(screen)
         lava_group.draw(screen)
+        coin_group.draw(screen)
         exit_group.draw(screen)
 
         game_over = Player.update(game_over)
@@ -367,6 +391,7 @@ while run:
                 world_data = []
                 world = reset_level(level)
                 game_over = 0
+                score = 0
 
         # if player passed
         if game_over == 1:
@@ -375,15 +400,20 @@ while run:
             if level <= max_levels:
                 # reset level
                 world_data = []
-                world = reset_level(level)   #clear all data and return the new world data and store in world
+                world = reset_level(
+                    level
+                )  # clear all data and return the new world data and store in world
                 game_over = 0
             else:
-                # restart
+                # restart if player compleate all levels
                 if restart_button.draw():
                     level = 1
                     world_data = []
-                    world = reset_level(level)   #clear all data and return the new world data and store in world
+                    world = reset_level(
+                        level
+                    )  # clear all data and return the new world data and store in world
                     game_over = 0
+                    score = 0
 
     # draw_grid()
 
