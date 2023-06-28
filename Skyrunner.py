@@ -70,6 +70,7 @@ def reset_level(level):
     blob_group.empty()
     platform_group.empty()
     lava_group.empty()
+    coin_group.empty()
     exit_group.empty()
 
     # load in level data and create wirld
