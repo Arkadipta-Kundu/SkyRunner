@@ -487,7 +487,7 @@ while run:
                 score += 1
                 coin_fx.play()
             draw_text("X " + str(score), font_score, white, tile_size - 2, 5)
-            draw_text("Level " + str(level+1), font_score, white, tile_size + 640, 5)
+            draw_text("Level " + str(level), font_score, white, tile_size + 640, 5)
 
         # drawing things onto screen
         blob_group.draw(screen)
