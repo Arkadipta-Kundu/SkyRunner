@@ -10,7 +10,7 @@ mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
-fps = 120
+fps = 60
 
 screen_width = 800
 screen_height = 800
@@ -27,13 +27,13 @@ font_score = pygame.font.SysFont("Bauhaus 93", 30)
 # define colours
 white = (255, 255, 255)
 blue = (0, 0, 255)
-red = (255, 0, 0)
+red = (255, 0, 0) 
 
 # define game variables
 tile_size = 40
 game_over = 0
 main_menu = True
-level = 0
+level = 7
 max_levels = 8
 score = 0
 # text_col = white
