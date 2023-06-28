@@ -34,7 +34,7 @@ tile_size = 40
 game_over = 0
 main_menu = True
 level = 0
-max_levels = 7
+max_levels = 8
 score = 0
 # text_col = white
 
