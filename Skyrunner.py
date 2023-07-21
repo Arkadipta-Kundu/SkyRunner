@@ -512,6 +512,7 @@ while run:
         if game_over == 1:
             # reset game go to next level
             level += 1
+            # fps += 10
             if level <= max_levels:
                 # reset level
                 world_data = []
