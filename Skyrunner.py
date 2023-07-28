@@ -449,7 +449,7 @@ coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
 # dummy coin
-score_coin = Coin(tile_size // 2+ 5, tile_size // 2 +2)
+score_coin = Coin(tile_size // 2 + 5, tile_size // 2 +2) 
 coin_group.add(score_coin)
 
 
