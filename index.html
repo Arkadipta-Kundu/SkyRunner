@@ -14,8 +14,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
+            /* Reset margin to avoid extra spacing */
             background-color: #f1f1f1;
+        }
+
+        .container-center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         h1 {
@@ -39,18 +48,20 @@
 
         /* Footer styles */
         .footer {
-            margin-top: auto;
             background-color: #f1f1f1;
             padding: 20px;
             text-align: center;
+            width: 100%;
         }
     </style>
 </head>
 
 <body>
-    <h1>Skyrunner</h1>
-    <a href="https://drive.google.com/uc?export=download&id=1iv-fCzLpc5PbIKQg2kzM6VDQuo0TKcJZ"
-        class="btn btn-secondary btn-lg download-button" id="download-btn">Download</a>
+    <div class="container-center">
+        <h1>Skyrunner</h1>
+        <a href="https://drive.google.com/uc?export=download&id=1iv-fCzLpc5PbIKQg2kzM6VDQuo0TKcJZ"
+            class="btn btn-secondary btn-lg download-button" id="download-btn">Download</a>
+    </div>
 
     <!-- Instructions -->
     <div class="alert alert-info instructions">
@@ -58,9 +69,10 @@
         Step 1: Unzip the file.<br>
         Step 2: Click on the Skyrunner.exe to open the game.<br>
         Step 3: Enjoy!<br><br>
-        <em>Remember: <strong>Do not move the Skyrunner.exe from this folder to anywhere.</strong> If done, it will not
-            work. However,
-            you can create a shortcut and move that shortcut anywhere you want. This is not a mobile game, so do not try
+        <em>Remember: <strong>Do not move the Skyrunner.exe from this folder to anywhere.</strong> If done, it will
+            not work. However,
+            you can create a shortcut and move that shortcut anywhere you want. This is not a mobile game, so do
+            not try
             this on mobile.</em>
     </div>
 

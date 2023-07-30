@@ -141,7 +141,7 @@ class Player:
                 self.diarection = 1
             if (
                 key[pygame.K_a] == False and key[pygame.K_d] == False
-            ):  # reset char to standby
+            ):  # reset char to standby when no key is pressed
                 self.counter = 0
                 self.index = 0
                 if self.diarection == 1:
@@ -150,11 +150,10 @@ class Player:
                     self.image = self.images_left[self.index]
 
             # handle animation
-            # self.counter += 1
-            if self.counter > walk_cooldown:  # to slow dawn and normalize the animation
+            if self.counter > walk_cooldown:  # to slow dawn and normalize the animation if self.counter is greater then 20 then the loop will run and it will make counter 0 again
                 self.counter = 0
-                self.index += 1
-                if self.index >= len(self.images_right):
+                self.index += 1   # cycle through the images
+                if self.index >= len(self.images_right): # limiting
                     self.index = 0
                 if self.diarection == 1:
                     self.image = self.images_right[self.index]
@@ -262,7 +261,7 @@ class Player:
             img_right = pygame.transform.scale(img_right, (32, 64))
             image_left = pygame.transform.flip(
                 img_right, True, False
-            )  # not for yaxis false
+            )  # not for yaxis false 
             self.images_right.append(img_right)
             self.images_left.append(image_left)
         self.dead_image = pygame.image.load("img/ghost.png")
