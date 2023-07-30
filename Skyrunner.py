@@ -27,7 +27,7 @@ font_score = pygame.font.SysFont("Bauhaus 93", 30)
 # define colours
 white = (255, 255, 255)
 blue = (0, 0, 255)
-red = (255, 0, 0) 
+red = (255, 0, 0)
 
 # define game variables
 tile_size = 40
@@ -125,7 +125,9 @@ class Player:
         if game_over == 0:
             # getting keypresses
             key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped == False and self.in_air == False: #in_air is check is the player is standing on a block or not ?
+            if (
+                key[pygame.K_SPACE] and self.jumped == False and self.in_air == False
+            ):  # in_air is check is the player is standing on a block or not ?
                 jump_fx.play()
                 self.val_y = -14  # length of jump
                 self.jumped = True
@@ -150,10 +152,12 @@ class Player:
                     self.image = self.images_left[self.index]
 
             # handle animation
-            if self.counter > walk_cooldown:  # to slow dawn and normalize the animation if self.counter is greater then 20 then the loop will run and it will make counter 0 again
+            if (
+                self.counter > walk_cooldown
+            ):  # to slow dawn and normalize the animation if self.counter is greater then 20 then the loop will run and it will make counter 0 again
                 self.counter = 0
-                self.index += 1   # cycle through the images
-                if self.index >= len(self.images_right): # limiting
+                self.index += 1  # cycle through the images
+                if self.index >= len(self.images_right):  # limiting
                     self.index = 0
                 if self.diarection == 1:
                     self.image = self.images_right[self.index]
@@ -234,12 +238,12 @@ class Player:
         elif game_over == -1:
             self.image = self.dead_image
             draw_text(
-                    "GAME OVER !",
-                    font,
-                    red,
-                    (screen_width // 2) - 112,
-                    screen_height // 2,
-                )
+                "GAME OVER !",
+                font,
+                red,
+                (screen_width // 2) - 112,
+                screen_height // 2,
+            )
             if self.rect.y > 200:
                 self.rect.y -= 5
             # if self.rect.bottom > screen_height:
@@ -261,7 +265,7 @@ class Player:
             img_right = pygame.transform.scale(img_right, (32, 64))
             image_left = pygame.transform.flip(
                 img_right, True, False
-            )  # not for yaxis false 
+            )  # not for yaxis false
             self.images_right.append(img_right)
             self.images_left.append(image_left)
         self.dead_image = pygame.image.load("img/ghost.png")
@@ -448,7 +452,7 @@ coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
 # dummy coin
-score_coin = Coin(tile_size // 2 + 5, tile_size // 2 +2) 
+score_coin = Coin(tile_size // 2 + 5, tile_size // 2 + 2)
 coin_group.add(score_coin)
 
 
