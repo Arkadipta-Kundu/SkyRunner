@@ -32,6 +32,10 @@
         .download-button:hover {
             transform: scale(1.1);
         }
+
+        .instructions {
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -39,16 +43,28 @@
     <h1>Skyrunner</h1>
     <a href="https://drive.google.com/uc?export=download&id=1iv-fCzLpc5PbIKQg2kzM6VDQuo0TKcJZ"
         class="btn btn-secondary btn-lg download-button" id="download-btn">Download</a>
+
+    <!-- Instructions -->
+    <div class="alert alert-info instructions">
+        <strong>Instructions:</strong><br>
+        Step 1: Unzip the file.<br>
+        Step 2: Click on the Skyrunner.exe to open the game.<br>
+        Step 3: Enjoy!<br><br>
+        <em>Remember: Do not move the Skyrunner.exe from this folder to anywhere. If done, it will not work. However,
+            you can create a shortcut and move that anywhere you want.</em>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
+
     <script>
         const downloadButton = document.getElementById('download-btn');
         downloadButton.addEventListener('click', function () {
             const alertDiv = document.createElement('div');
             alertDiv.classList.add('alert', 'alert-success', 'mt-3');
-            alertDiv.textContent = 'A simple success alert—check it out!';
-            document.body.appendChild(alertDiv);
+            alertDiv.textContent = 'Please hold on download is starting';
+            downloadButton.insertAdjacentElement('afterend', alertDiv);
         });
     </script>
 </body>
