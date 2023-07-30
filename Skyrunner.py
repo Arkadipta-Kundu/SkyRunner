@@ -125,7 +125,7 @@ class Player:
         if game_over == 0:
             # getting keypresses
             key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped == False and self.in_air == False:
+            if key[pygame.K_SPACE] and self.jumped == False and self.in_air == False: #in_air is check is the player is standing on a block or not ?
                 jump_fx.play()
                 self.val_y = -14  # length of jump
                 self.jumped = True
@@ -233,15 +233,15 @@ class Player:
 
         elif game_over == -1:
             self.image = self.dead_image
-            if self.rect.y > 200:
-                self.rect.y -= 5
-                draw_text(
+            draw_text(
                     "GAME OVER !",
                     font,
                     red,
                     (screen_width // 2) - 112,
                     screen_height // 2,
                 )
+            if self.rect.y > 200:
+                self.rect.y -= 5
             # if self.rect.bottom > screen_height:
             #     self.rect.bottom = screen_height
             #     dy = 0
@@ -470,6 +470,7 @@ while run:
     clock.tick(fps)
     screen.blit(bg_img, (0, 0))
     screen.blit(sun_img, (100, 100))
+    coin_group.add(score_coin)
 
     if main_menu == True:
         if exit_button.draw():
