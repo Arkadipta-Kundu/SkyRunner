@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        /* Custom styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f1f1f1;
+        }
+
+        h1 {
+            color: red;
+        }
+
+        .download-button {
+            margin-top: 20px;
+            background-color: darkcyan;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .download-button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Skyrunner</h1>
+    <a href="https://drive.google.com/uc?export=download&id=1iv-fCzLpc5PbIKQg2kzM6VDQuo0TKcJZ"
+        class="btn btn-secondary btn-lg download-button" id="download-btn">Download</a>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+    <script>
+        const downloadButton = document.getElementById('download-btn');
+        downloadButton.addEventListener('click', function () {
+            const alertDiv = document.createElement('div');
+            alertDiv.classList.add('alert', 'alert-success', 'mt-3');
+            alertDiv.textContent = 'A simple success alert—check it out!';
+            document.body.appendChild(alertDiv);
+        });
+    </script>
+</body>
+
+</html>
