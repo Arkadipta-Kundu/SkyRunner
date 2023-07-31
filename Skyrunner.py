@@ -241,8 +241,8 @@ class Player:
                 "GAME OVER !",
                 font,
                 red,
-                (screen_width // 2) - 112,
-                screen_height // 2,
+                (screen_width // 2) - 175,
+                screen_height // 2 - 50,
             )
             if self.rect.y > 200:
                 self.rect.y -= 5
@@ -538,8 +538,8 @@ while run:
                     "YOU WIN !",
                     font,
                     blue,
-                    (screen_width // 2) - 112,
-                    screen_height // 2,
+                    (screen_width // 2) - 150,
+                    screen_height // 2 - 50,
                 )
                 if restart_button.draw():
                     level = 0
