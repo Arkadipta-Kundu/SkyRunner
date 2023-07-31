@@ -477,6 +477,13 @@ while run:
     coin_group.add(score_coin)
 
     if main_menu == True:
+        draw_text(
+                    "SKYRUNNER",
+                    font,
+                    blue,
+                    (screen_width // 2) - 175,
+                    (screen_height // 2) - 300,
+                )
         if exit_button.draw():
             run = False  # fuctionality to exit button
         if start_button.draw():
