@@ -22,12 +22,14 @@ pygame.display.set_caption("Skyrunner")
 # define font
 font = pygame.font.SysFont("Bauhaus 93", 70)
 font_score = pygame.font.SysFont("Bauhaus 93", 30)
+font_score2 = pygame.font.SysFont("Bauhaus 93", 50)
 
 
 # define colours
 white = (255, 255, 255)
 blue = (0, 0, 255)
 red = (255, 0, 0)
+green = (30, 13, 172)
 
 # define game variables
 tile_size = 40
@@ -241,7 +243,7 @@ class Player:
                 "GAME OVER !",
                 font,
                 red,
-                (screen_width // 2) - 175,
+                (screen_width // 2) - 195,
                 screen_height // 2 - 50,
             )
             if self.rect.y > 200:
@@ -464,7 +466,7 @@ world = World(world_data)
 
 
 # create button
-restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
+restart_button = Button(screen_width // 2 - 65, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - 150, screen_height // 2 + 50, start_img)
 exit_button = Button(screen_width // 2 - 130, screen_height // 2 - 150, exit_img)
 
@@ -478,12 +480,12 @@ while run:
 
     if main_menu == True:
         draw_text(
-                    "SKYRUNNER",
-                    font,
-                    blue,
-                    (screen_width // 2) - 175,
-                    (screen_height // 2) - 300,
-                )
+            "SKYRUNNER",
+            font,
+            blue,
+            (screen_width // 2) - 175,
+            (screen_height // 2) - 300,
+        )
         if exit_button.draw():
             run = False  # fuctionality to exit button
         if start_button.draw():
@@ -513,7 +515,6 @@ while run:
         # if player died
         if game_over == -1:
             if restart_button.draw():  # if game over the restart buttton
-                # print("restart")
                 world_data = []
                 world = reset_level(level)
                 game_over = 0
@@ -531,15 +532,21 @@ while run:
                     level
                 )  # clear all data and return the new world data and store in world
                 game_over = 0
-                # draw_text("Level " + str(level), font_score, white, tile_size - 10, 10)
             else:
                 # restart if player compleate all levels
                 draw_text(
                     "YOU WIN !",
                     font,
-                    blue,
+                    green,
                     (screen_width // 2) - 150,
-                    screen_height // 2 - 50,
+                    screen_height // 2 - 70,
+                )
+                draw_text(
+                    "Score" + str(score),
+                    font_score2,
+                    green,
+                    (screen_width // 2) - 80,
+                    screen_height // 2 + 10,
                 )
                 if restart_button.draw():
                     level = 0
