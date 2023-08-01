@@ -38,6 +38,7 @@ main_menu = True
 level = 0
 max_levels = 8
 score = 0
+# high_score = 0
 # text_col = white
 
 
@@ -123,6 +124,7 @@ class Player:
         dy = 0
         walk_cooldown = 5
         col_thresh = 20
+        global high_score
 
         if game_over == 0:
             # getting keypresses
@@ -253,6 +255,13 @@ class Player:
                     (screen_width // 2) - 80,
                     screen_height // 2 + 20,
                 )
+            # Check if the current score is higher than the previous high score
+            if score > high_score:
+                high_score = score
+            # Save the high score to a file
+            with open(high_score_file, "wb") as file:
+                pickle.dump(high_score, file)
+
             if self.rect.y > 200:
                 self.rect.y -= 5
             # if self.rect.bottom > screen_height:
@@ -448,6 +457,13 @@ class Exit(pygame.sprite.Sprite):
 #     [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 # ]
 
+high_score_file = "img/high_score.pkl"
+if path.exists(high_score_file):
+    with open(high_score_file, "rb") as file:
+        high_score = pickle.load(file)
+else:
+    high_score = 0
+
 
 # main part and loop of the game where everything comes together
 
@@ -509,6 +525,8 @@ while run:
                 coin_fx.play()
             draw_text("X " + str(score), font_score, white, tile_size - 2, 5)
             draw_text("Level " + str(level), font_score, white, tile_size + 640, 5)
+            # Drawing the high score
+            draw_text("High Score: " + str(high_score), font_score, white, tile_size + 265, 5)
 
         # drawing things onto screen
         blob_group.draw(screen)
@@ -555,6 +573,10 @@ while run:
                     (screen_width // 2) - 80,
                     screen_height // 2 + 10,
                 )
+                # Check if the current score is higher than the previous high score
+                if score > high_score:
+                    high_score = score
+
                 if restart_button.draw():
                     level = 0
                     world_data = []
