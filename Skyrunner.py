@@ -249,7 +249,7 @@ class Player:
                 screen_height // 2 - 50,
             )
             draw_text(
-                    "Score" + str(score),
+                    "Score " + str(score),
                     font_score2,
                     green,
                     (screen_width // 2) - 80,
