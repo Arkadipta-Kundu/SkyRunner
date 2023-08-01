@@ -246,6 +246,13 @@ class Player:
                 (screen_width // 2) - 195,
                 screen_height // 2 - 50,
             )
+            draw_text(
+                    "Score" + str(score),
+                    font_score2,
+                    green,
+                    (screen_width // 2) - 80,
+                    screen_height // 2 + 20,
+                )
             if self.rect.y > 200:
                 self.rect.y -= 5
             # if self.rect.bottom > screen_height:
