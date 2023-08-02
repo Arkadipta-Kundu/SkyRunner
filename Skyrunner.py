@@ -549,6 +549,7 @@ while run:
         if game_over == 1:
             # reset game go to next level
             level += 1
+            score = int(score + ((score*20)/100)+(level/1.4))
             # fps += 10
             if level <= max_levels:
                 # reset level
