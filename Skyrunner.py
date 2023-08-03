@@ -23,6 +23,7 @@ pygame.display.set_caption("Skyrunner")
 font = pygame.font.SysFont("Bauhaus 93", 70)
 font_score = pygame.font.SysFont("Bauhaus 93", 30)
 font_score2 = pygame.font.SysFont("Bauhaus 93", 50)
+font_info = pygame.font.SysFont("Bauhaus 93", 40)
 
 
 # define colours
@@ -30,12 +31,13 @@ white = (255, 255, 255)
 blue = (0, 0, 255)
 red = (255, 0, 0)
 green = (30, 13, 172)
+info = (181, 22, 22)
 
 # define game variables
 tile_size = 40
 game_over = 0
 main_menu = True
-level = 0
+level = 8
 max_levels = 8
 score = 0
 # high_score = 0
@@ -48,6 +50,7 @@ bg_img = pygame.image.load("img/sky.png")
 restart_img = pygame.image.load("img/restart_btn.png")
 start_img = pygame.image.load("img/start_btn.png")
 exit_img = pygame.image.load("img/exit_btn.png")
+exit_img2 = pygame.image.load("img/exit_btn2.png")
 
 
 # load sounds
@@ -492,6 +495,7 @@ world = World(world_data)
 restart_button = Button(screen_width // 2 - 65, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - 150, screen_height // 2 + 50, start_img)
 exit_button = Button(screen_width // 2 - 130, screen_height // 2 - 150, exit_img)
+exit_button2 = Button(screen_width // 2 - 65, screen_height // 2 + 155, exit_img2)
 
 # the main loop
 run = True
@@ -508,6 +512,13 @@ while run:
             blue,
             (screen_width // 2) - 175,
             (screen_height // 2) - 300,
+        )
+        draw_text(
+            "*press A and D to move",
+            font_info,
+            info,
+            (screen_width // 2) - 195,
+            (screen_height // 2) + 300,
         )
         if exit_button.draw():
             run = False  # fuctionality to exit button
@@ -544,12 +555,13 @@ while run:
                 world = reset_level(level)
                 game_over = 0
                 score = 0
+            elif exit_button2.draw():
+                run = False
 
         # if player passed
         if game_over == 1:
             # reset game go to next level
             level += 1
-            score = int(score + ((score*20)/100)+(level/1.4))
             # fps += 10
             if level <= max_levels:
                 # reset level
@@ -586,6 +598,9 @@ while run:
                     )  # clear all data and return the new world data and store in world
                     game_over = 0
                     score = 0
+                elif exit_button2.draw():
+                    run = False
+
 
     # draw_grid()
 
